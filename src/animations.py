@@ -27,3 +27,23 @@ class Flying_Animation():
 
         self.rect.x += self.nep_XChange
         self.rect.y += self.nep_YChange
+
+#Idle Animation
+class Idle_Animation():
+    def __init__(self, nep_rect):
+        self.rect = nep_rect
+        self.m = 1
+        self.v = 5
+        self.jump = 1
+
+    def update(self):
+        if self.jump == 1:
+            k = 0.05 * self.m * self.v ** 2  # Calculate the vertical displacement
+            self.rect.y -= k  # Update the sprite's vertical position
+            self.v -= 1  # Simulate gravity by gradually decreasing velocity
+            if self.v < 0:
+                self.m = -1  # Change the direction of displacement for a realistic jump feel
+            if self.v == -11:
+                self.m = 1  # Reset parameters for subsequent jumps
+                self.v = 10
+                #self.jump = 0
