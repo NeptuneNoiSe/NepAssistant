@@ -5,6 +5,7 @@ import win32gui
 from pygame.locals import *
 from sprites import Neptune
 from animations import Flying_Animation
+from animations import Idle_Animation
 
 def main():
     pygame.init()
@@ -34,13 +35,15 @@ def main():
     #Neptune Vars
     clock = pygame.time.Clock()
     FPS = 30
-    w = W - 50
-    h = H - 500
+    w = W - 25
+    h = H - 420
     wb = W - 400 #500
     hb = H - 350 #450
+    DOUBLECLICKTIME = 500
     i = 0
     nep = Neptune(w, h, i)
     nep_group = pygame.sprite.Group(nep)
+    idle_animation = Idle_Animation(nep.rect)
     flying_animation = Flying_Animation(wb, hb, nep.rect)
     #print(nep.rect)
 
@@ -60,9 +63,16 @@ def main():
             elif event.type == USEREVENT+2:
                     nep.set_index()
 
-            elif event.type == MOUSEBUTTONDOWN:
+            elif event.type == MOUSEBUTTONDOWN and event.button == 1:
                 if nep.rect.collidepoint(event.pos):
                     moving = True
+
+
+                if clock.tick() < DOUBLECLICKTIME:
+                    nep.zero_index()
+                    #print(nep.rect)
+                    #return flying_animation.update()
+                    idle_animation.update()
 
             elif event.type == MOUSEBUTTONUP:
                 moving = False
@@ -70,13 +80,13 @@ def main():
             elif event.type == MOUSEMOTION and moving:
                 nep.rect.move_ip(event.rel)
 
-
-        flying_animation.update()
+        idle_animation.update()
+        #flying_animation.update()
         nep_group.update()
         screen.fill(t_color) #Transparent background
         clock.tick(FPS)
         nep_group.draw(screen)
-        # screen.blit(nep.image, nep.rect)
+        #screen.blit(nep.image, nep.rect)
         pygame.display.update()
 
 
