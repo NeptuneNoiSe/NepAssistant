@@ -6,13 +6,13 @@ bonk_event = pygame.USEREVENT + 1
 no_bonk_event = pygame.USEREVENT + 2
 
 #Flying Animation Class
-class Flying_Animation():
+class Flying_Animation:
     def __init__(self, wb,hb, nep_rect):
         self.rect = nep_rect
         self.wb = wb
         self.hb = hb
         self.NepPixel = 25
-        self.nep_XChange = 3 * random.choice((-1, -1))
+        self.nep_XChange = 3 * -1 #random.choice((-1, -1))
         self.nep_YChange = 3
 
     def update(self):
@@ -29,7 +29,7 @@ class Flying_Animation():
         self.rect.y += self.nep_YChange
 
 #Idle Animation
-class Idle_Animation():
+class Idle_Animation:
     def __init__(self, nep_rect):
         self.rect = nep_rect
         self.m = 1
@@ -46,4 +46,9 @@ class Idle_Animation():
             if self.v == -11:
                 self.m = 1  # Reset parameters for subsequent jumps
                 self.v = 10
-                #self.jump = 0
+
+    def start(self):
+        self.jump = 1
+
+    def stop(self):
+        self.jump = 0

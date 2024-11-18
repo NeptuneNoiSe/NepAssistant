@@ -2,10 +2,16 @@ import pygame
 import win32api
 import win32con
 import win32gui
+import random
 from pygame.locals import *
 from sprites import Neptune
 from animations import Flying_Animation
 from animations import Idle_Animation
+from set_interval import setInterval
+
+def set_nep_timer(eventObj, interval):
+    func = lambda x: pygame.event.post(x)
+    return setInterval(func=func, sec=interval, args=[eventObj])
 
 def main():
     pygame.init()
@@ -16,7 +22,7 @@ def main():
     infoObject = pygame.display.Info()
     W = infoObject.current_w
     H = infoObject.current_h
-    screen = pygame.display.set_mode((W, H - 10)) #,pygame.NOFRAME
+    screen = pygame.display.set_mode((W, H - 20),pygame.NOFRAME) #,pygame.NOFRAME
 
     #Colors
     t_color = (138, 127, 142) #Transparency color
@@ -38,14 +44,23 @@ def main():
     w = W - 25
     h = H - 420
     wb = W - 400 #500
-    hb = H - 350 #450
-    DOUBLECLICKTIME = 500
+    hb = H - 360 #450
+    #DOUBLE_CLICK_TIME = 500
     i = 0
     nep = Neptune(w, h, i)
     nep_group = pygame.sprite.Group(nep)
     idle_animation = Idle_Animation(nep.rect)
     flying_animation = Flying_Animation(wb, hb, nep.rect)
     #print(nep.rect)
+
+    #Animation Switch Vars
+    IDLE = 10  # TODO: maybe use an Enumerated Type
+    FLYING = 20
+    animation_state = IDLE
+    ANIMATION_SWITCH = 1
+    AnimationSwitchEvent = pygame.event.Event(USEREVENT, MyOwnType=ANIMATION_SWITCH)
+    random_int = random.randint(6, 12)
+    myIntervalHandle1 = set_nep_timer(AnimationSwitchEvent,random_int)
 
     #Main While
     running = True
@@ -55,6 +70,8 @@ def main():
         for event in pygame.event.get():
 
             if event.type == QUIT:
+                pygame.quit()
+                myIntervalHandle1.stop()
                 running = False
 
             elif event.type == USEREVENT+1:
@@ -63,25 +80,43 @@ def main():
             elif event.type == USEREVENT+2:
                     nep.set_index()
 
+            elif event.type == USEREVENT:
+                if event.MyOwnType == ANIMATION_SWITCH:
+                    if animation_state == IDLE:
+                        animation_state = FLYING
+                    elif animation_state == FLYING:
+                        animation_state = IDLE
+
             elif event.type == MOUSEBUTTONDOWN and event.button == 1:
+                myIntervalHandle1.stop()
+                idle_animation.stop()
+                nep.minus_index()
+                animation_state = IDLE
                 if nep.rect.collidepoint(event.pos):
                     moving = True
 
-
-                if clock.tick() < DOUBLECLICKTIME:
-                    nep.zero_index()
-                    #print(nep.rect)
-                    #return flying_animation.update()
-                    idle_animation.update()
+                #if clock.tick() < DOUBLE_CLICK_TIME:
+                #        nep.zero_index()
+                #        print(nep.rect)
+                #        nep_group.update()
+                #print(rando)
 
             elif event.type == MOUSEBUTTONUP:
+                nep.set_index()
+                idle_animation.start()
+                random_int = random.randint(6, 12)
+                myIntervalHandle1 = set_nep_timer(AnimationSwitchEvent, random_int)
                 moving = False
 
             elif event.type == MOUSEMOTION and moving:
                 nep.rect.move_ip(event.rel)
 
-        idle_animation.update()
-        #flying_animation.update()
+        #Animation Switch
+        if animation_state == IDLE:
+            idle_animation.update()
+        elif animation_state == FLYING:
+            flying_animation.update()
+
         nep_group.update()
         screen.fill(t_color) #Transparent background
         clock.tick(FPS)
