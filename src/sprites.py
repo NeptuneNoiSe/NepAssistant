@@ -24,5 +24,11 @@ class Neptune(pygame.sprite.Sprite):
             self.index = 0
         self.image = self.images[self.index]
 
+    def minus_index(self):
+        self.index -= 1
+        if self.index >= len(self.images):
+            self.index = 0
+        self.image = self.images[self.index]
+
     def zero_index(self):
         self.index = 0
