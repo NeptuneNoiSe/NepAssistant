@@ -45,7 +45,6 @@ def main():
     h = H - 420
     wb = W - 400 #500
     hb = H - 360 #450
-    #DOUBLE_CLICK_TIME = 500
     i = 0
     nep = Neptune(w, h, i)
     nep_group = pygame.sprite.Group(nep)
@@ -54,12 +53,12 @@ def main():
     #print(nep.rect)
 
     #Animation Switch Vars
-    IDLE = 10  # TODO: maybe use an Enumerated Type
+    IDLE = 10  #maybe use an Enumerated Type
     FLYING = 20
     animation_state = IDLE
     ANIMATION_SWITCH = 1
     AnimationSwitchEvent = pygame.event.Event(USEREVENT, MyOwnType=ANIMATION_SWITCH)
-    random_int = random.randint(6, 12)
+    random_int = random.randint(6, 6)
     myIntervalHandle1 = set_nep_timer(AnimationSwitchEvent,random_int)
 
     #Main While
@@ -75,10 +74,14 @@ def main():
                 running = False
 
             elif event.type == USEREVENT+1:
-                    nep.set_index()
+                nep.set_index()
 
             elif event.type == USEREVENT+2:
-                    nep.set_index()
+                nep.set_index()
+
+            elif event.type == USEREVENT+3:
+                animation_state = IDLE
+                nep.zero_index()
 
             elif event.type == USEREVENT:
                 if event.MyOwnType == ANIMATION_SWITCH:
@@ -95,16 +98,10 @@ def main():
                 if nep.rect.collidepoint(event.pos):
                     moving = True
 
-                #if clock.tick() < DOUBLE_CLICK_TIME:
-                #        nep.zero_index()
-                #        print(nep.rect)
-                #        nep_group.update()
-                #print(rando)
-
             elif event.type == MOUSEBUTTONUP:
                 nep.set_index()
                 idle_animation.start()
-                random_int = random.randint(6, 12)
+                random_int = random.randint(6, 6)
                 myIntervalHandle1 = set_nep_timer(AnimationSwitchEvent, random_int)
                 moving = False
 

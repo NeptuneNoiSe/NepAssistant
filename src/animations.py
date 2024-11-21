@@ -4,6 +4,7 @@ from resourses import *
 #Animation Triggers
 bonk_event = pygame.USEREVENT + 1
 no_bonk_event = pygame.USEREVENT + 2
+border_event = pygame.USEREVENT + 3
 
 #Flying Animation Class
 class Flying_Animation:
@@ -14,8 +15,23 @@ class Flying_Animation:
         self.NepPixel = 25
         self.nep_XChange = 3 * -1 #random.choice((-1, -1))
         self.nep_YChange = 3
+        self.bonk = 0
 
     def update(self):
+        if self.rect.x > self.wb or self.rect.y > self.hb:
+            self.rect.x = self.wb / 2
+            self.rect.y = self.hb / 2
+            self.nep_XChange = 3 * -1
+            self.nep_YChange = 3
+            pygame.time.set_timer(border_event, 1, 1)
+
+        if self.rect.x < -3 or self.rect.y < 0:
+            self.rect.x = self.wb / 2
+            self.rect.y = self.hb / 2
+            self.nep_XChange = 3 * -1
+            self.nep_YChange = 3
+            pygame.time.set_timer(border_event, 1, 1)
+
         if self.rect.x + self.NepPixel >= self.wb or self.rect.x <= 0:
             self.nep_XChange *= -1
             pygame.time.set_timer(bonk_event, 1,1)
