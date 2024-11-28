@@ -5,7 +5,7 @@ from resourses import *
 bonk_event = pygame.USEREVENT + 1
 no_bonk_event = pygame.USEREVENT + 2
 border_event = pygame.USEREVENT + 3
-event1 = pygame.USEREVENT + 4
+minus_event = pygame.USEREVENT + 4
 
 #Flying Animation Class
 class Flying_Animation:
@@ -64,7 +64,7 @@ class Idle_Animation:
 
             self.rect.y += self.nep_YChange
         if self.i == 1:
-            pygame.time.set_timer(event1, 1, 1)
+            pygame.time.set_timer(minus_event, 1, 1)
             self.i = 0
             self.k = 1
 
@@ -84,7 +84,6 @@ class Idle_Animation:
             if self.v == -11:
                 self.m = 1  # Reset parameters for subsequent jumps
                 self.v = 10
-
 
     def start(self):
         self.jump = 1

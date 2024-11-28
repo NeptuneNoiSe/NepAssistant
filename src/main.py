@@ -96,11 +96,14 @@ def main():
             elif event.type == MOUSEBUTTONDOWN and event.button == 1:
                 myIntervalHandle1.stop()
                 idle_animation.stop()
-                #animation_state = IDLE
+                if animation_state == FLYING:
+                    nep.minus_index()
                 if nep.rect.collidepoint(event.pos):
                     moving = True
 
             elif event.type == MOUSEBUTTONUP and event.button == 1:
+                if animation_state == FLYING:
+                    nep.set_index()
                 idle_animation.start()
                 random_int = random.randint(6, 6)
                 myIntervalHandle1 = set_nep_timer(AnimationSwitchEvent, random_int)
