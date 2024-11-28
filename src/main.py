@@ -48,7 +48,7 @@ def main():
     i = 0
     nep = Neptune(w, h, i)
     nep_group = pygame.sprite.Group(nep)
-    idle_animation = Idle_Animation(nep.rect)
+    idle_animation = Idle_Animation(wb, hb, nep.rect)
     flying_animation = Flying_Animation(wb, hb, nep.rect)
     #print(nep.rect)
 
@@ -83,6 +83,9 @@ def main():
                 animation_state = IDLE
                 nep.zero_index()
 
+            elif event.type == USEREVENT+4:
+                nep.minus_index()
+
             elif event.type == USEREVENT:
                 if event.MyOwnType == ANIMATION_SWITCH:
                     if animation_state == IDLE:
@@ -93,13 +96,11 @@ def main():
             elif event.type == MOUSEBUTTONDOWN and event.button == 1:
                 myIntervalHandle1.stop()
                 idle_animation.stop()
-                nep.minus_index()
-                animation_state = IDLE
+                #animation_state = IDLE
                 if nep.rect.collidepoint(event.pos):
                     moving = True
 
-            elif event.type == MOUSEBUTTONUP:
-                nep.set_index()
+            elif event.type == MOUSEBUTTONUP and event.button == 1:
                 idle_animation.start()
                 random_int = random.randint(6, 6)
                 myIntervalHandle1 = set_nep_timer(AnimationSwitchEvent, random_int)
@@ -110,8 +111,10 @@ def main():
 
         #Animation Switch
         if animation_state == IDLE:
+            nep.idle()
             idle_animation.update()
         elif animation_state == FLYING:
+            nep.flying()
             flying_animation.update()
 
         nep_group.update()

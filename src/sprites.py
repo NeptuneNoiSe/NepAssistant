@@ -3,11 +3,20 @@ from resourses import *
 class Neptune(pygame.sprite.Sprite):
     def __init__(self, x, y, i):
         pygame.sprite.Sprite.__init__(self)
-        self.images = []
-        self.images.append(nep_main)
-        self.images.append(nep_v_v_t)
-        self.images.append(nep_main_t)
-        self.images.append(nep_v_v)
+        #Idle Group
+        self.nep = []
+        self.nep.append(nep_main)
+        self.nep.append(nep_v_v_t)
+        self.nep.append(nep_main_t)
+        self.nep.append(nep_v_v)
+        #Flying Group
+        self.hehe = []
+        self.hehe.append(nep_hehe)
+        self.hehe.append(nep_v_v_t)
+        self.hehe.append(nep_hehe_t)
+        self.hehe.append(nep_v_v)
+
+        self.images = self.nep
         self.index = i
         self.image = self.images[self.index]
         self.rect = self.image.get_rect(topright=(x, y))
@@ -32,3 +41,9 @@ class Neptune(pygame.sprite.Sprite):
 
     def zero_index(self):
         self.index = 0
+
+    def flying(self):
+        self.images = self.hehe
+
+    def idle(self):
+        self.images = self.nep

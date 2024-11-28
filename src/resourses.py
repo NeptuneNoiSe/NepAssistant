@@ -13,4 +13,9 @@ nep_main_t = pt.flip(nep_main, True, False)
 raw_nep_v_v = pygame.image.load('assets/animation/neptune_v_v.png')
 nep_v_v = pt.smoothscale(raw_nep_v_v, (img_x, img_y)) #(532,424)
 nep_v_v_t = pt.flip(nep_v_v, True, False)
+#Neptune Hehe
+raw_nep_hehe = pygame.image.load('assets/animation/neptune_hehe.png')
+nep_hehe = pt.smoothscale(raw_nep_hehe, (img_x, img_y)) #(532,424)
+nep_hehe_t = pt.flip(nep_hehe, True, False)
+
 
