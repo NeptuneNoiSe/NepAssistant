@@ -7,6 +7,7 @@ from pygame.locals import *
 from sprites import Neptune
 from animations import Flying_Animation
 from animations import Idle_Animation
+from effets import ParticleSystem
 from set_interval import setInterval
 
 def set_nep_timer(eventObj, interval):
@@ -47,9 +48,11 @@ def main():
     hb = H - 360 #450
     i = 0
     nep = Neptune(w, h, i)
+    particle_system = ParticleSystem()
     nep_group = pygame.sprite.Group(nep)
     idle_animation = Idle_Animation(wb, hb, nep.rect)
     flying_animation = Flying_Animation(wb, hb, nep.rect)
+
     #print(nep.rect)
 
     #Animation Switch Vars
@@ -118,11 +121,17 @@ def main():
             idle_animation.update()
         elif animation_state == FLYING:
             nep.flying()
+            particle_y = nep.rect.y + 363 // 2
+            particle_x = nep.rect.x + 200
+            particle_system.add_particle(particle_x, particle_y)
+
             flying_animation.update()
 
+        particle_system.update()
         nep_group.update()
         screen.fill(t_color) #Transparent background
         clock.tick(FPS)
+        particle_system.draw(screen)
         nep_group.draw(screen)
         #screen.blit(nep.image, nep.rect)
         pygame.display.update()
