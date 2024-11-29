@@ -11,10 +11,10 @@ class Neptune(pygame.sprite.Sprite):
         self.nep.append(nep_v_v)
         #Flying Group
         self.hehe = []
-        self.hehe.append(nep_hehe)
-        self.hehe.append(nep_v_v_t)
-        self.hehe.append(nep_hehe_t)
-        self.hehe.append(nep_v_v)
+        self.hehe.append(nep_hehe_w)
+        self.hehe.append(nep_v_v_w_t)
+        self.hehe.append(nep_hehe_w_t)
+        self.hehe.append(nep_v_v_w)
 
         self.images = self.nep
         self.index = i
