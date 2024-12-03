@@ -1,5 +1,4 @@
-import random
-from resourses import *
+import pygame
 
 #Animation Triggers
 bonk_event = pygame.USEREVENT + 1

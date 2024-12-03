@@ -7,8 +7,9 @@ from pygame.locals import *
 from sprites import Neptune
 from animations import Flying_Animation
 from animations import Idle_Animation
-from effets import ParticleSystem
+from effects import ParticleSystem
 from set_interval import setInterval
+
 
 def set_nep_timer(eventObj, interval):
     func = lambda x: pygame.event.post(x)
@@ -42,12 +43,15 @@ def main():
     #Neptune Vars
     clock = pygame.time.Clock()
     FPS = 30
-    w = W - 25
-    h = H - 420
-    wb = W - 400 #500
-    hb = H - 360 #450
+    scale = 1.3
+    rand_a = 30
+    rand_b = 60
+    w = W - 25/scale
+    h = H - 420/scale
+    wb = W - 400/scale #500
+    hb = H - 360/scale #450
     i = 0
-    nep = Neptune(w, h, i)
+    nep = Neptune(w, h, i, scale)
     particle_system = ParticleSystem()
     nep_group = pygame.sprite.Group(nep)
     idle_animation = Idle_Animation(wb, hb, nep.rect)
@@ -61,7 +65,7 @@ def main():
     animation_state = IDLE
     ANIMATION_SWITCH = 1
     AnimationSwitchEvent = pygame.event.Event(USEREVENT, MyOwnType=ANIMATION_SWITCH)
-    random_int = random.randint(6, 6)
+    random_int = random.randint(rand_a, rand_b)
     myIntervalHandle1 = set_nep_timer(AnimationSwitchEvent,random_int)
 
     #Main While
@@ -89,6 +93,7 @@ def main():
             elif event.type == USEREVENT+4:
                 nep.minus_index()
 
+
             elif event.type == USEREVENT:
                 if event.MyOwnType == ANIMATION_SWITCH:
                     if animation_state == IDLE:
@@ -108,7 +113,7 @@ def main():
                 if animation_state == FLYING:
                     nep.set_index()
                 idle_animation.start()
-                random_int = random.randint(6, 6)
+                random_int = random.randint(rand_a, rand_b)
                 myIntervalHandle1 = set_nep_timer(AnimationSwitchEvent, random_int)
                 moving = False
 
@@ -122,9 +127,8 @@ def main():
         elif animation_state == FLYING:
             nep.flying()
             particle_y = nep.rect.y + 363 // 2
-            particle_x = nep.rect.x + 200
+            particle_x = nep.rect.x + 200/scale #200
             particle_system.add_particle(particle_x, particle_y)
-
             flying_animation.update()
 
         particle_system.update()
