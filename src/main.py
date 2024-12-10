@@ -5,11 +5,9 @@ import win32gui
 import random
 from pygame.locals import *
 from sprites import Neptune
-from animations import Flying_Animation
-from animations import Idle_Animation
+from animations import Flying_Animation, Idle_Animation
 from effects import ParticleSystem
 from set_interval import setInterval
-
 
 def set_nep_timer(eventObj, interval):
     func = lambda x: pygame.event.post(x)
@@ -44,8 +42,9 @@ def main():
     clock = pygame.time.Clock()
     FPS = 30
     scale = 1.3
-    rand_a = 30
-    rand_b = 60
+    rand_a = 20
+    rand_b = 20
+    blink_int = random.randint(3, 9)
     w = W - 25/scale
     h = H - 420/scale
     wb = W - 400/scale #500
@@ -56,7 +55,6 @@ def main():
     nep_group = pygame.sprite.Group(nep)
     idle_animation = Idle_Animation(wb, hb, nep.rect)
     flying_animation = Flying_Animation(wb, hb, nep.rect)
-
     #print(nep.rect)
 
     #Animation Switch Vars
@@ -64,9 +62,16 @@ def main():
     FLYING = 20
     animation_state = IDLE
     ANIMATION_SWITCH = 1
+    CLOSE_EYES_SWITCH = 2
+    OPEN_EYES_SWITCH = 3
     AnimationSwitchEvent = pygame.event.Event(USEREVENT, MyOwnType=ANIMATION_SWITCH)
+    CloseEyesEvent = pygame.event.Event(USEREVENT, MyOwnType=CLOSE_EYES_SWITCH)
+    OpenEyesEvent = pygame.event.Event(USEREVENT, MyOwnType=OPEN_EYES_SWITCH)
     random_int = random.randint(rand_a, rand_b)
-    myIntervalHandle1 = set_nep_timer(AnimationSwitchEvent,random_int)
+    AnimationSwitchInterval = set_nep_timer(AnimationSwitchEvent,random_int)
+    CloseEyesInterval = set_nep_timer(CloseEyesEvent, blink_int)
+    OpenEyesInterval = set_nep_timer(OpenEyesEvent, 0.5)
+    OpenEyesInterval.stop()
 
     #Main While
     running = True
@@ -77,7 +82,9 @@ def main():
 
             if event.type == QUIT:
                 pygame.quit()
-                myIntervalHandle1.stop()
+                AnimationSwitchInterval.stop()
+                CloseEyesInterval.stop()
+                OpenEyesInterval.stop()
                 running = False
 
             elif event.type == USEREVENT+1:
@@ -93,16 +100,21 @@ def main():
             elif event.type == USEREVENT+4:
                 nep.minus_index()
 
-
             elif event.type == USEREVENT:
                 if event.MyOwnType == ANIMATION_SWITCH:
                     if animation_state == IDLE:
                         animation_state = FLYING
                     elif animation_state == FLYING:
                         animation_state = IDLE
+                elif event.MyOwnType == CLOSE_EYES_SWITCH:
+                    nep.eyes_close()
+                    OpenEyesInterval.start()
+                elif event.MyOwnType == OPEN_EYES_SWITCH:
+                    nep.eyes_open()
+                    OpenEyesInterval.stop()
 
             elif event.type == MOUSEBUTTONDOWN and event.button == 1:
-                myIntervalHandle1.stop()
+                AnimationSwitchInterval.stop()
                 idle_animation.stop()
                 if animation_state == FLYING:
                     nep.minus_index()
@@ -114,7 +126,7 @@ def main():
                     nep.set_index()
                 idle_animation.start()
                 random_int = random.randint(rand_a, rand_b)
-                myIntervalHandle1 = set_nep_timer(AnimationSwitchEvent, random_int)
+                AnimationSwitchInterval = set_nep_timer(AnimationSwitchEvent, random_int)
                 moving = False
 
             elif event.type == MOUSEMOTION and moving:
@@ -137,7 +149,6 @@ def main():
         clock.tick(FPS)
         particle_system.draw(screen)
         nep_group.draw(screen)
-        #screen.blit(nep.image, nep.rect)
         pygame.display.update()
 
 

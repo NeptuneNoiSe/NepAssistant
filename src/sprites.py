@@ -9,7 +9,7 @@ class Neptune(pygame.sprite.Sprite):
         img_x = 416 / scale  # 416
         img_y = 362 / scale  # 362
 
-        #images Load
+        #Images Load
         # Neptune Main Image
         raw_nep_main = pygame.image.load('assets/sprites/neptune_main.png')
         nep_main = pt.smoothscale(raw_nep_main, (img_x, img_y))  # (532,424)
@@ -38,10 +38,8 @@ class Neptune(pygame.sprite.Sprite):
         #Idle Group
         self.nep = []
         self.nep.append(nep_main)
-        #self.nep.append(nep_funny)
         self.nep.append(nep_v_v_t)
         self.nep.append(nep_main_t)
-        #self.nep.append(nep_funny_t)
         self.nep.append(nep_v_v)
 
         #Blink_eye Group
@@ -54,10 +52,8 @@ class Neptune(pygame.sprite.Sprite):
         #Flying Group
         self.hehe = []
         self.hehe.append(nep_hehe_w)
-        #self.hehe.append(nep_hehe_w_c)
         self.hehe.append(nep_v_v_w_t)
         self.hehe.append(nep_hehe_w_t)
-        #self.hehe.append(nep_hehe_w_c_t)
         self.hehe.append(nep_v_v_w)
 
         #Flying_blink Group
@@ -72,18 +68,27 @@ class Neptune(pygame.sprite.Sprite):
         self.image = self.images[self.index]
         self.rect = self.image.get_rect(topright=(x, y))
 
+        self.OPEN = 10  # maybe use an Enumerated Type
+        self.CLOSE = 20
+        self.anim = self.OPEN
+
     def update(self):
         #self.index += i
         if self.index >= len(self.images):
             self.index = 0
         self.image = self.images[self.index]
 
+    def eyes_open(self):
+        self.anim = self.OPEN
+
+    def eyes_close(self):
+        self.anim = self.CLOSE
+
     def set_index(self):
         self.index += 1
         if self.index >= len(self.images):
             self.index = 0
         self.image = self.images[self.index]
-
 
     def minus_index(self):
         self.index -= 1
@@ -95,11 +100,13 @@ class Neptune(pygame.sprite.Sprite):
         self.index = 0
 
     def flying(self):
-        self.images = self.hehe
+        if self.anim == self.OPEN:
+            self.images = self.hehe
+        elif self.anim == self.CLOSE:
+            self.images = self.hehe_blink
 
     def idle(self):
-        self.images = self.nep
-
-    #def eye_blink(self):
-    #    if self.index == 0 or self.index == 2:
-     #       self.index = 0
+        if self.anim == self.OPEN:
+            self.images = self.nep
+        elif self.anim == self.CLOSE:
+            self.images = self.nep_blink
