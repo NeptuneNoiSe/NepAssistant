@@ -60,8 +60,8 @@ class Idle_Animation:
         if self.rect.y <= self.hb - 63:
             self.jump = 0
             self.nep_YChange *= 1
-
             self.rect.y += self.nep_YChange
+
         if self.i == 1:
             pygame.time.set_timer(minus_event, 1, 1)
             self.i = 0
