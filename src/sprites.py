@@ -6,8 +6,8 @@ class Neptune_Face(pygame.sprite.Sprite):
     def __init__(self, x, y, i, scale):
         pygame.sprite.Sprite.__init__(self)
         # Image Resolution
-        img_x = 416 / scale  # 416
-        img_y = 362 / scale  # 362
+        img_x = 832 / scale  # 416
+        img_y = 724 / scale  # 362
 
         # Images Load
         # Neptune Main Face
@@ -34,30 +34,27 @@ class Neptune_Face(pygame.sprite.Sprite):
         # Idle Group
         self.nep = []
         self.nep.append(nep_face)
-        self.nep.append(nep_face_v_v_t)
         self.nep.append(nep_face_t)
-        self.nep.append(nep_face_v_v)
+
+        # Bonk Group
+        self.bonk = []
+        self.bonk.append(nep_face_v_v)
+        self.bonk.append(nep_face_v_v_t)
 
         # Blink_eye Group
         self.nep_blink = []
         self.nep_blink.append(nep_face_funny)
-        self.nep_blink.append(nep_face_v_v_t)
         self.nep_blink.append(nep_face_funny_t)
-        self.nep_blink.append(nep_face_v_v)
 
         # Flying Group
         self.hehe = []
         self.hehe.append(nep_face_hehe)
-        self.hehe.append(nep_face_v_v_t)
         self.hehe.append(nep_face_hehe_t)
-        self.hehe.append(nep_face_v_v)
 
         # Flying_blink Group
         self.hehe_blink = []
         self.hehe_blink.append(nep_face_hehe_c)
-        self.hehe_blink.append(nep_face_v_v_t)
         self.hehe_blink.append(nep_face_hehe_c_t)
-        self.hehe_blink.append(nep_face_v_v)
 
         # Sprites Vars
         self.images = self.nep
@@ -66,8 +63,9 @@ class Neptune_Face(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topright=(x, y))
 
         # Switch Vars
-        self.OPEN = 10  # maybe use an Enumerated Type
+        self.OPEN = 10
         self.CLOSE = 20
+        self.BONK = 30
         self.anim = self.OPEN
 
     def update(self):
@@ -81,6 +79,12 @@ class Neptune_Face(pygame.sprite.Sprite):
 
     def eyes_close(self):
         self.anim = self.CLOSE
+
+    def set_bonk(self):
+        self.anim = self.BONK
+
+    def set_no_bonk(self):
+        self.anim = self.OPEN
 
     def set_index(self):
         self.index += 1
@@ -100,12 +104,16 @@ class Neptune_Face(pygame.sprite.Sprite):
     def flying(self):
         if self.anim == self.OPEN:
             self.images = self.hehe
+        elif self.anim == self.BONK:
+            self.images = self.bonk
         elif self.anim == self.CLOSE:
             self.images = self.hehe_blink
 
     def idle(self):
         if self.anim == self.OPEN:
             self.images = self.nep
+        elif self.anim == self.BONK:
+            self.images = self.bonk
         elif self.anim == self.CLOSE:
             self.images = self.nep_blink
 
@@ -113,8 +121,8 @@ class Neptune_Body(pygame.sprite.Sprite):
     def __init__(self, x, y, i, scale):
         pygame.sprite.Sprite.__init__(self)
         # Image Resolution
-        img_x = 416 / scale  # 416
-        img_y = 362 / scale  # 362
+        img_x = 832 / scale  # 416
+        img_y = 724 / scale  # 362
 
         # Images Load
         # Neptune Main Image
@@ -126,8 +134,6 @@ class Neptune_Body(pygame.sprite.Sprite):
         self.nep = []
         self.nep.append(nep_main)
         self.nep.append(nep_main_t)
-        self.nep.append(nep_main_t)
-        self.nep.append(nep_main)
 
         # Sprites Vars
         self.images = self.nep
@@ -160,8 +166,8 @@ class Neptune_Wings(pygame.sprite.Sprite):
     def __init__(self, x, y, i, scale):
         pygame.sprite.Sprite.__init__(self)
         # Image Resolution
-        img_x = 416 / scale  # 416
-        img_y = 362 / scale  # 362
+        img_x = 832 / scale  # 416
+        img_y = 724 / scale  # 362
 
         # Images Load
         # Neptune Blank Image
@@ -177,15 +183,11 @@ class Neptune_Wings(pygame.sprite.Sprite):
         self.nep_blank = []
         self.nep_blank.append(nep_blank)
         self.nep_blank.append(nep_blank)
-        self.nep_blank.append(nep_blank)
-        self.nep_blank.append(nep_blank)
 
         # Wings Group
         self.nep_wings = []
         self.nep_wings.append(nep_wings)
         self.nep_wings.append(nep_wings_t)
-        self.nep_wings.append(nep_wings_t)
-        self.nep_wings.append(nep_wings)
 
         # Sprites Vars
         self.images = self.nep_blank
@@ -224,8 +226,8 @@ class Neptune_Guns(pygame.sprite.Sprite):
     def __init__(self, x, y, i, scale):
         pygame.sprite.Sprite.__init__(self)
         # Image Resolution
-        img_x = 416 / scale  # 416
-        img_y = 362 / scale  # 362
+        img_x = 832 / scale  # 416
+        img_y = 724 / scale  # 362
 
         # Images Load
         # Neptune Main Image
@@ -240,15 +242,11 @@ class Neptune_Guns(pygame.sprite.Sprite):
         self.nep_blank = []
         self.nep_blank.append(nep_blank)
         self.nep_blank.append(nep_blank)
-        self.nep_blank.append(nep_blank)
-        self.nep_blank.append(nep_blank)
 
         # Guns Group
         self.nep_guns = []
         self.nep_guns.append(nep_guns)
         self.nep_guns.append(nep_guns_t)
-        self.nep_guns.append(nep_guns_t)
-        self.nep_guns.append(nep_guns)
 
         # Sprites Vars
         self.images = self.nep_blank

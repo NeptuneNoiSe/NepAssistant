@@ -1,3 +1,4 @@
+import sys
 import pygame
 import win32api
 import win32con
@@ -42,14 +43,14 @@ def main():
     #Neptune Vars
     clock = pygame.time.Clock()
     FPS = 30
-    scale = 1.3
+    scale = 2.5
     rand_a = 10
     rand_b = 10
-    blink_int = random.randint(3, 9)
+    blink_int = random.randint(5, 5)
     w = W - 25/scale
-    h = H - 420/scale
-    wb = W - 400/scale #500
-    hb = H - 360/scale #450
+    h = H - 820/scale
+    wb = W - 770/scale #500
+    hb = H - 660/scale #450
     i = 0
 
     #Initial Sprites
@@ -74,12 +75,14 @@ def main():
     particle_system = ParticleSystem()
 
     #Animation Switch Vars
-    IDLE = 10  #maybe use an Enumerated Type
+    IDLE = 10
     FLYING = 20
     animation_state = IDLE
     ANIMATION_SWITCH = 1
     CLOSE_EYES_SWITCH = 2
     OPEN_EYES_SWITCH = 3
+    BONK = 100
+    BORDER = 101
 
     #Timer Events
     AnimationSwitchEvent = pygame.event.Event(USEREVENT, MyOwnType=ANIMATION_SWITCH)
@@ -90,7 +93,7 @@ def main():
     #Set Timer Interval
     AnimationSwitchInterval = set_nep_timer(AnimationSwitchEvent,random_int)
     CloseEyesInterval = set_nep_timer(CloseEyesEvent, blink_int)
-    OpenEyesInterval = set_nep_timer(OpenEyesEvent, 0.25)
+    OpenEyesInterval = set_nep_timer(OpenEyesEvent, 0.3)
     OpenEyesInterval.stop()
 
     #Group Functions
@@ -160,26 +163,50 @@ def main():
         for event in pygame.event.get():
 
             if event.type == QUIT:
-                pygame.quit()
                 AnimationSwitchInterval.stop()
                 CloseEyesInterval.stop()
                 OpenEyesInterval.stop()
+                pygame.quit()
+                #sys.exit()
                 running = False
 
-            elif event.type == USEREVENT+1: #Bonk Event
-                nep_set_index()
+            elif event.type == USEREVENT+1: #No Bonk
+                if not OpenEyesInterval.running:
+                    OpenEyesInterval.start()
+                nep_face.eyes_open()
 
-            elif event.type == USEREVENT+2: #NoBonk Event
-                nep_set_index()
+            elif event.type == USEREVENT+2: #Falling
+                if CloseEyesInterval.running:
+                   CloseEyesInterval.stop()
+                nep_face.set_bonk()
+                if OpenEyesInterval.running:
+                   OpenEyesInterval.stop()
 
             elif event.type == USEREVENT+3: #Border Event
                 animation_state = IDLE
                 nep_zero_index()
+                #if CloseEyesInterval.running:
+                    #CloseEyesInterval.stop()
+            elif event.type == USEREVENT+4: #Border Event
+                animation_state = IDLE
+                nep_zero_index()
 
-            elif event.type == USEREVENT+4: #Minus Event
-                nep_minus_index()
+            elif event.type == USEREVENT+5: #No Bonk
+                if not OpenEyesInterval.running:
+                    OpenEyesInterval.start()
+                nep_face.eyes_open()
 
             elif event.type == USEREVENT:
+                if event.MyOwnType == BONK:
+                    nep_set_index()
+                    nep_face.set_bonk()
+                    #if CloseEyesInterval.running:
+                        #CloseEyesInterval.stop()
+                    #if OpenEyesInterval.running:
+                       #OpenEyesInterval.stop()
+                elif event.MyOwnType == BORDER:
+                    animation_state = IDLE
+                    nep_zero_index()
                 if event.MyOwnType == ANIMATION_SWITCH:
                     if animation_state == IDLE:
                         animation_state = FLYING
@@ -187,16 +214,23 @@ def main():
                         animation_state = IDLE
                 elif event.MyOwnType == CLOSE_EYES_SWITCH:
                     nep_face.eyes_close()
-                    OpenEyesInterval.start()
+                    #CloseEyesInterval.stop()
+                    #if CloseEyesInterval.running:
+                        #CloseEyesInterval.stop()
+                    if not OpenEyesInterval.running:
+                        OpenEyesInterval.start()
+
                 elif event.MyOwnType == OPEN_EYES_SWITCH:
                     nep_face.eyes_open()
-                    OpenEyesInterval.stop()
+                    #CloseEyesInterval.start()
+                    if OpenEyesInterval.running:
+                        OpenEyesInterval.stop()
 
             elif event.type == MOUSEBUTTONDOWN and event.button == 1:
                 AnimationSwitchInterval.stop()
                 idle_animation_stop()
                 if animation_state == FLYING:
-                    nep_minus_index()
+                    nep_face.set_bonk()
                 if nep_face.rect.collidepoint(event.pos):
                     moving = True
                 if nep_body.rect.collidepoint(event.pos):
@@ -208,7 +242,9 @@ def main():
 
             elif event.type == MOUSEBUTTONUP and event.button == 1:
                 if animation_state == FLYING:
-                    nep_set_index()
+                    nep_face.set_no_bonk()
+                    #if OpenEyesInterval.running:
+                    #    OpenEyesInterval.stop()
                 idle_animation_start()
                 random_int = random.randint(rand_a, rand_b)
                 AnimationSwitchInterval = set_nep_timer(AnimationSwitchEvent, random_int)
@@ -225,7 +261,7 @@ def main():
             nep_flying()
             flying_animation_update()
             particle_y = nep_face.rect.y + 363 // 2
-            particle_x = nep_face.rect.x + 200/scale #200
+            particle_x = nep_face.rect.x + 300/scale #200
             particle_system.add_particle(particle_x, particle_y)
 
         particle_system.update()
